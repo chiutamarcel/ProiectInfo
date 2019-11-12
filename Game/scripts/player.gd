@@ -19,13 +19,7 @@ func _physics_process(delta):
 	else:
 		anim_switch("idle")
 		
-	if Input.is_action_just_pressed("shoot_up") :
-		shoot()
-	if Input.is_action_just_pressed("shoot_down") :
-		shoot()
-	if Input.is_action_just_pressed("shoot_right") :
-		shoot()
-	if Input.is_action_just_pressed("shoot_left") :
+	if shootdir != Vector2(0,0):
 		shoot()
 
 func controls_loop():
@@ -46,6 +40,9 @@ func controls_loop():
 	
 	shootdir.x = -int(LEFT_SHOOT) + int(RIGHT_SHOOT)
 	shootdir.y = -int(UP_SHOOT) + int(DOWN_SHOOT)
+	
+	if shootdir.x != 0 and shootdir.y != 0:
+		shootdir.y = 0
 	
 func movement_loop():
 	var motion = movedir.normalized() * SPEED

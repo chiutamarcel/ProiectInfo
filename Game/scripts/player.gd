@@ -8,6 +8,8 @@ var movedir = Vector2(0,0)
 var shootdir = Vector2(0,0)
 var spriteDir = "down"
 var projectileSpriteDir = "down"
+var attackTimer = 0
+var attackDelay = 0.25
 
 func _physics_process(delta):
 	controls_loop()
@@ -19,8 +21,11 @@ func _physics_process(delta):
 	else:
 		anim_switch("idle")
 		
-	if shootdir != Vector2(0,0):
+	if shootdir != Vector2(0,0) and attackTimer >= attackDelay:
 		shoot()
+		attackTimer = 0
+	else:
+		attackTimer += delta
 
 func controls_loop():
 	#movement
@@ -33,10 +38,10 @@ func controls_loop():
 	movedir.y = -int(UP) + int(DOWN)
 	
 	#control
-	var LEFT_SHOOT = Input.is_action_just_pressed("shoot_left")
-	var RIGHT_SHOOT = Input.is_action_just_pressed("shoot_right")
-	var UP_SHOOT = Input.is_action_just_pressed("shoot_up")
-	var DOWN_SHOOT= Input.is_action_just_pressed("shoot_down")
+	var LEFT_SHOOT = Input.is_action_pressed("shoot_left")
+	var RIGHT_SHOOT = Input.is_action_pressed("shoot_right")
+	var UP_SHOOT = Input.is_action_pressed("shoot_up")
+	var DOWN_SHOOT= Input.is_action_pressed("shoot_down")
 	
 	shootdir.x = -int(LEFT_SHOOT) + int(RIGHT_SHOOT)
 	shootdir.y = -int(UP_SHOOT) + int(DOWN_SHOOT)

@@ -2,7 +2,7 @@ extends KinematicBody2D
 
 const SPEED = 140
 
-onready var projectile_scene = preload("res://scenes/areas/sword.tscn")
+onready var projectile_scene = preload("res://scenes/projectiles/sword.tscn")
 
 var movedir = Vector2(0,0)
 var shootdir = Vector2(0,0)

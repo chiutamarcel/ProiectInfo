@@ -1,16 +1,84 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://tiles/wall.tres" type="TileSet" id=1]
 [ext_resource path="res://scenes/characters/player.tscn" type="PackedScene" id=2]
 [ext_resource path="res://scenes/characters/wolf.tscn" type="PackedScene" id=3]
 
+[sub_resource type="GDScript" id=1]
+script/source = "extends TileMap
+
+onready var astar = AStar.new()
+
+onready var half_cell_size = cell_size/2
+
+onready var traversable_tiles = get_used_cells()
+
+onready var used_rect = get_used_rect()
+
+var direction = [Vector2(-1,0), Vector2(0, -1), Vector2(1, 0), Vector2(0, 1)]
+
+func _ready():
+	_add_traversable_tiles(traversable_tiles)
+	
+	_connect_traversable_tiles(traversable_tiles)
+	
+func _add_traversable_tiles(traversable_tiles):
+	for tile in traversable_tiles:
+		var id = _get_id_for_point(tile)
+		
+		astar.add_point(id , Vector3(tile.x,tile.y,0))
+	
+func _connect_traversable_tiles(traversable_tiles):
+	for tile in traversable_tiles:
+		var id = _get_id_for_point(tile)
+		
+		for x in range(4):
+			var target = tile + direction[x-1]
+			
+			var target_id = _get_id_for_point(target)
+			
+			if tile == target or not astar.has_point(target_id):
+				continue
+				
+			astar.connect_points(id, target_id, true)
+	
+func _get_id_for_point(point):
+	var x = point.x - used_rect.position.x
+	var y = point.y - used_rect.position.y
+	
+	return x + y * used_rect.size.x
+	
+func find_path(start, end):
+	var start_tile = world_to_map(start)
+	var end_tile = world_to_map(end)
+	
+	var start_id = _get_id_for_point(start_tile)
+	var end_id = _get_id_for_point(end_tile)
+	
+	if not astar.has_point(start_id) or not astar.has_point(end_id):
+		return null
+	
+	var path_map = astar.get_point_path(start_id, end_id)
+	
+	var path_world = []
+	for point in path_map:
+		var point_world = map_to_world(Vector2(point.x, point.y)) + half_cell_size
+		path_world.append(point_world)
+	return path_world
+	
+	
+	"
+
 [node name="Node" type="Node"]
 
-[node name="TileMap" type="TileMap" parent="."]
+[node name="Navigation2D" type="Navigation2D" parent="."]
+
+[node name="navigation_map" type="TileMap" parent="Navigation2D"]
 tile_set = ExtResource( 1 )
 cell_size = Vector2( 32, 32 )
 format = 1
-tile_data = PoolIntArray( 1, 1, 0, 2, 1, 0, 3, 1, 0, 4, 1, 0, 5, 1, 0, 6, 1, 0, 7, 1, 0, 8, 1, 0, 65536, 3, 0, 65537, 5, 0, 65538, 5, 0, 65539, 5, 0, 65540, 5, 0, 65541, 5, 0, 65542, 5, 0, 65543, 5, 0, 65544, 5, 0, 65545, 4, 0, 131072, 3, 0, 131073, 5, 0, 131074, 5, 0, 131075, 5, 0, 131076, 5, 0, 131077, 5, 0, 131078, 5, 0, 131079, 5, 0, 131080, 5, 0, 131081, 4, 0, 196608, 3, 0, 196609, 5, 0, 196610, 5, 0, 196611, 5, 0, 196612, 5, 0, 196613, 5, 0, 196614, 5, 0, 196615, 5, 0, 196616, 5, 0, 196617, 4, 0, 262144, 3, 0, 262145, 5, 0, 262146, 5, 0, 262147, 5, 0, 262148, 5, 0, 262149, 5, 0, 262150, 5, 0, 262151, 5, 0, 262152, 5, 0, 262153, 4, 0, 327680, 3, 0, 327681, 5, 0, 327682, 5, 0, 327683, 5, 0, 327684, 5, 0, 327685, 5, 0, 327686, 5, 0, 327687, 5, 0, 327688, 5, 0, 327689, 4, 0, 393216, 3, 0, 393217, 5, 0, 393218, 5, 0, 393219, 5, 0, 393220, 5, 0, 393221, 5, 0, 393222, 5, 0, 393223, 5, 0, 393224, 5, 0, 393225, 4, 0, 458752, 3, 0, 458753, 5, 0, 458754, 5, 0, 458755, 5, 0, 458756, 5, 0, 458757, 5, 0, 458758, 5, 0, 458759, 5, 0, 458760, 5, 0, 458761, 4, 0, 524289, 2, 0, 524290, 2, 0, 524291, 2, 0, 524292, 2, 0, 524293, 2, 0, 524294, 2, 0, 524295, 2, 0, 524296, 2, 0 )
+tile_data = PoolIntArray( 1, 1, 0, 2, 1, 0, 3, 1, 0, 4, 1, 0, 5, 1, 0, 6, 1, 0, 7, 1, 0, 8, 1, 0, 65536, 3, 0, 65537, 5, 0, 65538, 5, 0, 65539, 5, 0, 65540, 5, 0, 65541, 5, 0, 65542, 2, 0, 65543, 5, 0, 65544, 5, 0, 65545, 4, 0, 131072, 3, 0, 131073, 5, 0, 131074, 5, 0, 131075, 5, 0, 131076, 5, 0, 131077, 5, 0, 131078, 1, 0, 131079, 5, 0, 131080, 5, 0, 131081, 4, 0, 196608, 3, 0, 196609, 1, 0, 196610, 5, 0, 196611, 5, 0, 196612, 5, 0, 196613, 5, 0, 196614, 1, 0, 196615, 5, 0, 196616, 5, 0, 196617, 4, 0, 262144, 3, 0, 262145, 5, 0, 262146, 5, 0, 262147, 5, 0, 262148, 5, 0, 262149, 5, 0, 262150, 1, 0, 262151, 5, 0, 262152, 5, 0, 262153, 4, 0, 327680, 3, 0, 327681, 5, 0, 327682, 5, 0, 327683, 5, 0, 327684, 5, 0, 327685, 5, 0, 327686, 1, 0, 327687, 5, 0, 327688, 5, 0, 327689, 4, 0, 393216, 3, 0, 393217, 5, 0, 393218, 5, 0, 393219, 5, 0, 393220, 5, 0, 393221, 5, 0, 393222, 2, 0, 393223, 5, 0, 393224, 5, 0, 393225, 4, 0, 458752, 3, 0, 458753, 5, 0, 458754, 5, 0, 458755, 5, 0, 458756, 5, 0, 458757, 5, 0, 458758, 5, 0, 458759, 5, 0, 458760, 5, 0, 458761, 4, 0, 524289, 2, 0, 524290, 2, 0, 524291, 2, 0, 524292, 2, 0, 524293, 2, 0, 524294, 2, 0, 524295, 2, 0, 524296, 2, 0 )
+script = SubResource( 1 )
 __meta__ = {
 "_edit_lock_": true
 }
@@ -19,4 +87,7 @@ __meta__ = {
 position = Vector2( 166.449, 125.735 )
 
 [node name="wolf" parent="." instance=ExtResource( 3 )]
-position = Vector2( 229.796, 131.962 )
+position = Vector2( 250.842, 135.944 )
+
+[node name="Line2D" type="Line2D" parent="."]
+texture_mode = 1257251712

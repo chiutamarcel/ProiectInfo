@@ -9,7 +9,7 @@ var shootdir = Vector2(0,0)
 var spriteDir = "down"
 var projectileSpriteDir = "down"
 var attackTimer = 0
-var attackDelay = 0.25
+var attackDelay = 0.5
 var velocity
 
 func _physics_process(delta):

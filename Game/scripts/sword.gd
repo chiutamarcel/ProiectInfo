@@ -12,3 +12,5 @@ func _physics_process(delta):
 func _on_Area2D_body_entered(body):
 	if body.is_in_group("enemy"):
 		body.get_node("healthNode").takeDamage(damage)
+	if body.name != "player":
+		queue_free()

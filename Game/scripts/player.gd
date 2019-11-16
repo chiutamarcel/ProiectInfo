@@ -2,14 +2,15 @@ extends KinematicBody2D
 
 const SPEED = 140
 
-onready var projectile_scene = preload("res://scenes/areas/sword.tscn")
+onready var projectile_scene = preload("res://scenes/projectiles/sword.tscn")
 
 var movedir = Vector2(0,0)
 var shootdir = Vector2(0,0)
 var spriteDir = "down"
 var projectileSpriteDir = "down"
 var attackTimer = 0
-var attackDelay = 0.25
+var attackDelay = 0.5
+var velocity
 
 func _physics_process(delta):
 	controls_loop()
@@ -51,7 +52,7 @@ func controls_loop():
 	
 func movement_loop():
 	var motion = movedir.normalized() * SPEED
-	move_and_slide(motion, Vector2(0,0))
+	velocity = move_and_slide(motion, Vector2(0,0))
 	
 func spritedir_loop():
 	match movedir:

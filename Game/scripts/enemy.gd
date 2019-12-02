@@ -4,11 +4,12 @@ const SPEED = 100
 const ATTACK_DISTANCE = 35
 const ATTACK_CD = 1
 const POINT_RADIUS = 5
+const AGGRO_RANGE = 100
 
 onready var nav_2d : Navigation2D = get_parent().get_node("Navigation2D")
 onready var player = get_parent().get_node("player")
 
-var state = "chasing"
+var state = "idle"
 var attackTimer = 0
 var damage = 1
 var spriteDir
@@ -18,15 +19,11 @@ func _ready():
 	path = nav_2d.get_simple_path(position, player.position)
 	
 func _physics_process(delta):
-	if player.velocity.length() > 0:
-		_update_navigation_path(position, player)
-		
+	if position.distance_to(player.position) <= AGGRO_RANGE:
+		state = "chasing"
 	if position.distance_to(player.position) <= ATTACK_DISTANCE:
-		if attackTimer >= ATTACK_CD:
-			attack()
-		anim_switch("idle")
-	else:
-		gotoplayer(delta)
+		state = "attacking"
+
 		
 	attackTimer += delta
 	
@@ -34,6 +31,7 @@ func _physics_process(delta):
 		die()
 		
 	spritedir_loop()
+	state_loop(delta)
 	
 func gotoplayer(delta):
 	if path:
@@ -58,7 +56,7 @@ func anim_switch(animation):
 
 func spritedir_loop():
 	var direction
-	if path:
+	if path and state == "chasing":
 		if spriteDir != null:
 			anim_switch("run")
 		var target = path[0]
@@ -85,3 +83,17 @@ func _update_navigation_path(start_position, end_position):
 
 func die():
 	queue_free()
+	
+func _update_path_to_player():
+	if player.velocity.length() > 0:
+		_update_navigation_path(position, player)
+	
+func state_loop(delta):
+	_update_path_to_player()
+	match state :
+		"chasing":
+			gotoplayer(delta)
+		"attacking":
+			if attackTimer >= ATTACK_CD:
+				attack()
+			anim_switch("idle")

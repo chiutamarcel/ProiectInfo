@@ -265,3 +265,5 @@ shape = SubResource( 9 )
 
 [node name="healthNode" type="Node" parent="."]
 script = ExtResource( 3 )
+maxHealth = 2
+

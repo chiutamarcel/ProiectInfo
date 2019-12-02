@@ -1,7 +1,10 @@
 extends Node
 
-var curHealth = 5
-var maxHealth = 6
+var curHealth
+export var maxHealth = 6
+
+func _ready():
+	curHealth = maxHealth
 
 func takeDamage(damage):
 	curHealth -= damage

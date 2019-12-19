@@ -83,7 +83,9 @@ __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="player" parent="." instance=ExtResource( 2 )]
+[node name="player" parent="." groups=[
+"Player",
+] instance=ExtResource( 2 )]
 position = Vector2( 166.449, 125.735 )
 
 [node name="Camera2D" type="Camera2D" parent="player"]

@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=2]
+[gd_scene load_steps=14 format=2]
 
 [ext_resource path="res://scripts/enemy.gd" type="Script" id=1]
 [ext_resource path="res://sprites/characters/ss_wolf.png" type="Texture" id=2]
@@ -235,6 +235,9 @@ tracks/1/keys = {
 [sub_resource type="RectangleShape2D" id=9]
 extents = Vector2( 22.9258, 12.4952 )
 
+[sub_resource type="CircleShape2D" id=10]
+radius = 80.0
+
 [node name="wolf" type="KinematicBody2D" groups=[
 "enemy",
 ]]
@@ -267,3 +270,11 @@ shape = SubResource( 9 )
 script = ExtResource( 3 )
 maxHealth = 2
 
+[node name="effect" type="Tween" parent="."]
+
+[node name="AggroRange" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AggroRange"]
+shape = SubResource( 10 )
+
+[connection signal="body_entered" from="AggroRange" to="." method="_on_AggroRange_body_entered"]

@@ -12,18 +12,15 @@ onready var player = get_parent().get_node("player")
 var state = "idle"
 var attackTimer = 0
 var damage = 1
-var spriteDir
+var spriteDir = "down"
 var path
 
 func _ready():
 	path = nav_2d.get_simple_path(position, player.position)
 	
 func _physics_process(delta):
-	if position.distance_to(player.position) <= AGGRO_RANGE:
-		state = "chasing"
 	if position.distance_to(player.position) <= ATTACK_DISTANCE:
 		state = "attacking"
-
 		
 	attackTimer += delta
 	
@@ -97,3 +94,8 @@ func state_loop(delta):
 			if attackTimer >= ATTACK_CD:
 				attack()
 			anim_switch("idle")
+			state = "chasing"
+
+func _on_AggroRange_body_entered(body):
+	if body.name == "player":
+		state = "chasing"

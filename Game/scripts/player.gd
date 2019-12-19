@@ -27,6 +27,9 @@ func _physics_process(delta):
 		attackTimer = 0
 	else:
 		attackTimer += delta
+	
+	if $healthNode.curHealth <= 0:
+		die()
 
 func controls_loop():
 	#movement
@@ -75,3 +78,6 @@ func shoot():
 	get_parent().add_child(projectile)
 	projectile.position = get("position")
 	projectile.rotation = shootdir.angle()
+	
+func die():
+	get_tree().change_scene("res://scenes/areas/test.tscn")

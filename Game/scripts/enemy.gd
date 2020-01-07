@@ -6,7 +6,7 @@ const ATTACK_CD = 1
 const POINT_RADIUS = 5
 const AGGRO_RANGE = 100
 
-onready var nav_2d : Navigation2D = get_parent().get_node("Navigation2D")
+onready var nav_2d : Navigation2D = get_parent().get_parent()
 onready var player = get_parent().get_node("player")
 
 var state = "idle"

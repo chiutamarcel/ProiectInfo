@@ -135,7 +135,7 @@ tracks/0/keys = {
 }
 
 [sub_resource type="RectangleShape2D" id=9]
-extents = Vector2( 8, 15 )
+extents = Vector2( 13, 17 )
 
 [node name="player" type="KinematicBody2D"]
 script = ExtResource( 1 )
@@ -153,11 +153,13 @@ anims/walk_up = SubResource( 8 )
 
 [node name="Sprite" type="Sprite" parent="."]
 texture = ExtResource( 2 )
+centered = false
 vframes = 4
 hframes = 4
+frame = 12
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-visible = false
+position = Vector2( 16, 16 )
 scale = Vector2( 0.8, 0.9 )
 shape = SubResource( 9 )
 
